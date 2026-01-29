@@ -3,36 +3,37 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>File Opener with Close Confirmation</title>
+<title>Open HTML File with Close Confirmation</title>
 <script>
-  function openFileInBlank() {
-    const fileInput = document.getElementById('fileInput');
-    fileInput.click();
+  function openFile() {
+    document.getElementById('fileInput').value = ''; // reset input
+    document.getElementById('fileInput').click();
   }
 
   function handleFileChange(event) {
     const file = event.target.files[0];
-    if (file) {
+    if (file && file.name.endsWith('.html')) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        // Create a new window with about:blank
         const newWin = window.open('about:blank');
-        // Wait a moment for the window to open
         setTimeout(() => {
-          newWin.document.write('<pre>' + e.target.result + '</pre>');
-          // Set the confirmation dialog for closing
+          newWin.document.write(e.target.result);
+          newWin.document.close();
+          // Set the close confirmation
           newWin.onbeforeunload = function() {
             return 'Are you sure you want to close this window?';
           };
         }, 100);
       };
       reader.readAsText(file);
+    } else {
+      alert('Please select a valid .html file.');
     }
   }
 </script>
 </head>
 <body>
-  <button onclick="openFileInBlank()">Choose a File</button>
-  <input type="file" id="fileInput" style="display:none" accept="*/*" onchange="handleFileChange(event)" />
+  <button onclick="openFile()">Choose an HTML File</button>
+  <input type="file" id="fileInput" style="display:none" accept=".html" onchange="handleFileChange(event)" />
 </body>
 </html>
