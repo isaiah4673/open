@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>File Opener with Close Confirmation</title>
+<script>
+  function openFileInBlank() {
+    const fileInput = document.getElementById('fileInput');
+    fileInput.click();
+  }
+
+  function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        // Create a new window with about:blank
+        const newWin = window.open('about:blank');
+        // Wait a moment for the window to open
+        setTimeout(() => {
+          newWin.document.write('<pre>' + e.target.result + '</pre>');
+          // Set the confirmation dialog for closing
+          newWin.onbeforeunload = function() {
+            return 'Are you sure you want to close this window?';
+          };
+        }, 100);
+      };
+      reader.readAsText(file);
+    }
+  }
+</script>
+</head>
+<body>
+  <button onclick="openFileInBlank()">Choose a File</button>
+  <input type="file" id="fileInput" style="display:none" accept="*/*" onchange="handleFileChange(event)" />
+</body>
+</html>
